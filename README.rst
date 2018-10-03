@@ -4,5 +4,5 @@ To install from master branch run command
 
 .. code-block:: bash
 
-    python -m pip install git+git@github.com:sizmailov/bionmr-utils.git
+     python -m pip install git+ssh://git@github.com/sizmailov/bionmr-utils.git
 
