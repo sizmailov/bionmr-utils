@@ -23,6 +23,6 @@ setuptools.setup(
         "pyxmolpp2>=0.3,<1.0"
     ],
     package_data = {
-        "bionmr_utils.data": [ '*.csv' ]
+        "bionmr_utils": [ 'data/rename_tables/*.csv' ]
     }
 )
