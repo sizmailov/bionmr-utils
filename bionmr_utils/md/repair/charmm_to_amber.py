@@ -22,19 +22,19 @@ def rename_inplace_charmm_to_amber(frame: Frame):
         return ResidueName(s)
 
     anames = pd.concat([
-        pd.read_csv(resource_stream(bionmr_utils.data, "rename_tables/anames_%s.csv" % (suffix)))
+        pd.read_csv(resource_stream(bionmr_utils.data.__name__, "rename_tables/anames_%s.csv" % (suffix)))
         for suffix in ["protein", "DNA"]
     ]
     )
 
     termini_anames = pd.concat([
-        pd.read_csv(resource_stream(bionmr_utils.data, "rename_tables/anames_termini_%s.csv" % (suffix)))
+        pd.read_csv(resource_stream(bionmr_utils.data.__name__, "rename_tables/anames_termini_%s.csv" % (suffix)))
         for suffix in ["protein", "DNA"]
     ]
     )
 
     rnames = pd.concat([
-        pd.read_csv(resource_stream(bionmr_utils.data, "rename_tables/rnames_%s.csv" % (suffix)))
+        pd.read_csv(resource_stream(bionmr_utils.data.__name__, "rename_tables/rnames_%s.csv" % (suffix)))
         for suffix in ["protein", "DNA"]
     ]
     )
