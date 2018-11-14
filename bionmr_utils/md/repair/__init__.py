@@ -1,2 +1,3 @@
 
 from .rearrange_residues import rearrange_residues_in_chains
+from .charmm_to_amber import rename_inplace_charmm_to_amber
