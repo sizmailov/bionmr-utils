@@ -18,6 +18,8 @@ setuptools.setup(
         "Operating System :: Linux",
     ),
     install_requires=[
-        "pyxmolpp2>=0.3,<1.0"
+        "pyxmolpp2>=0.3,<1.0",
+        "tqdm",
+        "pandas",
     ]
 )
