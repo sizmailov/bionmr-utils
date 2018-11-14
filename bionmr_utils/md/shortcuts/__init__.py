@@ -1,4 +1,4 @@
-from typing import Union
+from typing import *
 import pyxmolpp2
 
 def traj_from_dir(path: str,
@@ -9,7 +9,7 @@ def traj_from_dir(path: str,
                   pattern: str = "run%05d",
                   subdir="5_run",
                   filetype: str = "dat") \
-        -> (pyxmolpp2.trajectory.Trajectory, pyxmolpp2.polymer.Frame):
+        -> Tuple[pyxmolpp2.trajectory.Trajectory, pyxmolpp2.polymer.Frame]:
     import os
     from tqdm import tqdm
 
