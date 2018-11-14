@@ -12,14 +12,19 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/x-rst",
     url="https://github.com/pypa/bionmr_utils",
+    include_package_data = True,
     packages=setuptools.find_packages(),
     classifiers=(
         "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 2",
         "Operating System :: Linux",
     ),
     install_requires=[
         "pyxmolpp2>=0.3,<1.0",
         "tqdm",
         "pandas",
-    ]
+    ],
+    package_data = {
+        "bionmr_utils": [ 'data/rename_tables/*.csv' ]
+    }
 )
