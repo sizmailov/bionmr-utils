@@ -11,15 +11,15 @@ setuptools.setup(
     description="Aggregate package of internal bionmr utils",
     long_description=long_description,
     long_description_content_type="text/x-rst",
-    url="https://github.com/pypa/bionmr_utils",
+    url="https://github.com/sizmailov/bionmr-utils",
     include_package_data = True,
     packages=setuptools.find_packages(),
     classifiers=(
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 2",
         "Operating System :: Linux",
     ),
     install_requires=[
+        "pyxmolpp2-stubs",
         "pyxmolpp2>=0.3,<1.0",
         "tqdm",
         "pandas",
