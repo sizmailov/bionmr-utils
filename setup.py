@@ -19,7 +19,7 @@ setuptools.setup(
         "Operating System :: Linux",
     ),
     install_requires=[
-        "pyxmolpp2>=0.6.0,<1.0",
+        "pyxmolpp2>=0.6.1,<1.0",
         "pyxmolpp2-stubs",
         "tqdm",
         "pandas",
