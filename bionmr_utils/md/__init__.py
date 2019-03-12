@@ -35,6 +35,8 @@ from pyxmolpp2.geometry import (
     calc_alignment,
     calc_autocorr_order_2,
     calc_geom_center,
+    calc_inertia_tensor,
+    calc_mass_center,
     calc_rmsd,
     cos,
     Degrees,

@@ -5,7 +5,7 @@ with open("README.rst", "r") as fh:
 
 setuptools.setup(
     name="bionmr-utils",
-    version="0.0.0",
+    version="0.0.1",
     author="Sergei Izmailov",
     author_email="sergei.a.izmailov@gmail.com",
     description="Aggregate package of internal bionmr utils",
@@ -19,8 +19,8 @@ setuptools.setup(
         "Operating System :: Linux",
     ),
     install_requires=[
+        "pyxmolpp2>=0.6.0,<1.0",
         "pyxmolpp2-stubs",
-        "pyxmolpp2>=0.3,<1.0",
         "tqdm",
         "pandas",
     ],
