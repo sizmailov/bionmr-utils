@@ -40,4 +40,4 @@ def rearrange_residues_in_chains(frame: Frame,
             chain.emplace(r)
         n += n_res
 
-    return frame
+    return new_frame
