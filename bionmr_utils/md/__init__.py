@@ -38,6 +38,7 @@ from pyxmolpp2.geometry import (
     calc_inertia_tensor,
     calc_mass_center,
     calc_rmsd,
+    calc_sasa,
     cos,
     Degrees,
     degrees_to_radians,
