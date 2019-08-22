@@ -50,6 +50,8 @@ def traj_from_dir(path: str,
 
     if filetype == "dat":
         portion_type = DatFile
+    elif filetype == "pdb":
+        portion_type = lambda filename: PdbFile(filename, altered_records)
     else:
         raise RuntimeError("Uknown trajectory coordinate filetype `%s`" % filetype)
 
