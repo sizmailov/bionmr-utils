@@ -1,6 +1,7 @@
 from typing import *
 import pyxmolpp2
 
+
 def traj_from_dir(path: str,
                   reference_pdb: Union[str, None] = None,
                   stride: int = 1,
@@ -15,6 +16,7 @@ def traj_from_dir(path: str,
 
     from pyxmolpp2.trajectory import Trajectory
     from pyxmolpp2.trjtool import DatFile
+    from pyxmolpp2.amber import NetCDFTrajectoryFile
     from pyxmolpp2.pdb import PdbFile, \
         AlteredPdbRecords, \
         StandardPdbRecords, \
@@ -52,10 +54,13 @@ def traj_from_dir(path: str,
         portion_type = DatFile
     elif filetype == "pdb":
         portion_type = lambda filename: PdbFile(filename, altered_records)
+    elif filetype == "nc":
+        portion_type = NetCDFTrajectoryFile
     else:
-        raise RuntimeError("Uknown trajectory coordinate filetype `%s`" % filetype)
+        raise RuntimeError("Unknown trajectory coordinate file type `%s`" % filetype)
 
-    for coordinate_file in tqdm(coordinate_files,leave=False, desc="checking input files"):
+
+    for coordinate_file in tqdm(coordinate_files, leave=False, desc="checking input files"):
         if not os.access(coordinate_file, os.O_RDONLY):
             raise RuntimeError("Can't access file `%s`" % coordinate_file)
         traj.push_trajectory_portion(portion_type(coordinate_file))

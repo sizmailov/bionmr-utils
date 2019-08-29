@@ -75,4 +75,8 @@ from pyxmolpp2.trjtool import (
     DatFile
 )
 
+from pyxmolpp2.amber import (
+    NetCDFTrajectoryFile
+)
+
 from .shortcuts import traj_from_dir
