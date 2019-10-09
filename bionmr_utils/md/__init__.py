@@ -34,6 +34,7 @@ from pyxmolpp2.geometry import (
     AngleValue,
     calc_alignment,
     calc_autocorr_order_2,
+    calc_autocorr_order_2_PRE,
     calc_geom_center,
     calc_inertia_tensor,
     calc_mass_center,
