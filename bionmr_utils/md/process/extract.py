@@ -1,3 +1,12 @@
+import os
+import pyxmolpp2
+import pandas as pd
+import numpy as np
+from tqdm import tqdm
+from typing import *
+from bionmr_utils.md import *
+from pyxmolpp2.geometry import calc_autocorr_order_2_PRE
+import math
 
 
 def extract_time_per_file_ns(path_to_trajectory: str) -> float:
@@ -96,3 +105,40 @@ def extract_mass_center(traj: Iterable[Frame],
         if volume is not None:
             bsf.scale_lattice_by(1 / factor_scale)
     return np.array(time), mass_centers
+
+
+def extract_vectors(trajectory: Union[Trajectory, pyxmolpp2.trajectory.TrajectorySlice],
+                  get_vectors: Callable[[Frame], List[Tuple[Atom, Atom]]],
+                  alignment_selector: Optional[Callable[[Atom], bool]] = None
+                  ) -> Dict[tuple, float]:
+    """
+    Get vectors from trajectory
+
+    :param trajectory:
+    :param get_vectors: function to determinate tracked vector
+    :param alignment_selector: Optional atom selector for frame alignment
+    :return dict of (rid, aname): auto-correlation
+    """
+    if alignment_selector is not None:
+        ref = trajectory[0]
+        ref_alignment_atoms = ref.asAtoms.filter(alignment_selector)
+        alignment_atoms = None
+    pair_vectors = None
+    vectors = None
+    for frame in tqdm(trajectory):
+        if alignment_selector is not None:
+            if alignment_atoms is None:
+                alignment_atoms = frame.asAtoms.filter(alignment_selector)
+                frame_atoms = frame.asAtoms
+            frame_atoms.transform(alignment_atoms.alignment_to(ref_alignment_atoms))
+        if pair_vectors is None:
+            pair_vectors = {}
+            vectors = {}
+            for atom1, atom2 in get_vectors(frame):
+                pair_vectors[atom1.rId, atom1.aName] = (atom1, atom2)
+                vectors[atom1.rId, atom1.aName] = VectorXYZ()
+
+        for (rid, aname), (atom1, atom2) in pair_vectors.items():
+            vectors[rid, aname].append(atom1.r - atom2.r)
+
+    return vectors
