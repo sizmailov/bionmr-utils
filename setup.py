@@ -24,7 +24,10 @@ setuptools.setup(
         "tqdm",
         "pandas",
     ],
-    package_data = {
-        "bionmr_utils": [ 'data/rename_tables/*.csv' ]
-    }
+    package_data={
+        "bionmr_utils": ['data/rename_tables/*.csv']
+    },
+    tests_require=[
+        'pytest'
+    ]
 )
