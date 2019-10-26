@@ -9,9 +9,12 @@ addons:
   apt:
     sources:
       - ubuntu-toolchain-r-test
+      - deadsnakes
     packages:
       - g++-7
       - cmake
+      - python3.6-dev
+#      - python3.4-dev
       - libnetcdf-dev
 
 matrix:
