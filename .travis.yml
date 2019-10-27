@@ -14,21 +14,21 @@ addons:
       - g++-7
       - gcc-7
       - cmake
-      - python3.6-dev
+      - python3.7-dev
       - python3.4-dev
       - libnetcdf-dev
 
 
 matrix:
   include:
-    - python: 3.6
-      name: "3.6"
+    - python: 3.7
+      name: "python 3.7, g++-7"
       env:
         - CXX=g++-7
         - CC=gcc-7
 
     - python: 3.4
-      name: "3.4"
+      name: "python 3.4, g++-7"
       env:
         - CXX=g++-7
         - CC=gcc-7
