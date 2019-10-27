@@ -1,4 +1,4 @@
-from typing import *
+from typing import Union, Tuple
 import pyxmolpp2
 
 
@@ -58,7 +58,6 @@ def traj_from_dir(path: str,
         portion_type = NetCDFTrajectoryFile
     else:
         raise RuntimeError("Unknown trajectory coordinate file type `%s`" % filetype)
-
 
     for coordinate_file in tqdm(coordinate_files, leave=False, desc="checking input files"):
         if not os.access(coordinate_file, os.O_RDONLY):

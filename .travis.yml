@@ -15,20 +15,23 @@ addons:
       - gcc-7
       - cmake
       - python3.6-dev
-#      - python3.4-dev
+      - python3.4-dev
       - libnetcdf-dev
 
-env:
-  - CXX=g++-7
-  - CC=gcc-7
 
 matrix:
   include:
     - python: 3.6
       name: "3.6"
+      env:
+        - CXX=g++-7
+        - CC=gcc-7
 
-#    - python: 3.4
-#      name: "3.4"
+    - python: 3.4
+      name: "3.4"
+      env:
+        - CXX=g++-7
+        - CC=gcc-7
 
 before_script:
   - git clone https://github.com/sizmailov/pyxmopp_tests_dataset.git tests_dataset
