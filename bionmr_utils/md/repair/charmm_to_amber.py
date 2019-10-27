@@ -1,5 +1,5 @@
-from bionmr_utils.md import *
 import bionmr_utils.data
+from bionmr_utils.md import (Frame, AtomName, ResidueName)
 
 
 def rename_inplace_charmm_to_amber(frame: Frame):
@@ -46,7 +46,9 @@ def rename_inplace_charmm_to_amber(frame: Frame):
     }
 
     rename_termini_aname_map = {
-        (row.residue_index, to_residue_name(amber_rName), to_atom_name(row.charmm_aName)): to_atom_name(row.amber_aName)
+        (
+            row.residue_index, to_residue_name(amber_rName), to_atom_name(row.charmm_aName)
+         ): to_atom_name(row.amber_aName)
         for index, row in termini_anames.iterrows()
         for amber_rName in row.amber_rNames.split("|")
     }

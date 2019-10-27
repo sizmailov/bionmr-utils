@@ -53,7 +53,7 @@ def traj_from_dir(path: str,
     if filetype == "dat":
         portion_type = DatFile
     elif filetype == "pdb":
-        portion_type = lambda filename: PdbFile(filename, altered_records)
+        portion_type = lambda filename: PdbFile(filename, altered_records)  # noqa: E731
     elif filetype == "nc":
         portion_type = NetCDFTrajectoryFile
     else:

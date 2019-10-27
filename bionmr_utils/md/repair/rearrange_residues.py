@@ -1,5 +1,5 @@
-from typing import *
-from bionmr_utils.md import *
+from typing import Union, List
+from bionmr_utils.md import (Frame, ChainName)
 
 
 def rearrange_residues_in_chains(frame: Frame,

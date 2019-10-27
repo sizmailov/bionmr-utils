@@ -1,5 +1,2 @@
-from bionmr_utils.md import *
-
-
 def test_import():
-    pass
+    from bionmr_utils.md import Trajectory  # noqa: F401
