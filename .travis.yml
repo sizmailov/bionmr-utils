@@ -15,7 +15,7 @@ addons:
       - gcc-7
       - cmake
       - python3.7-dev
-      - python3.4-dev
+      - python3.5-dev
       - libnetcdf-dev
 
 
@@ -27,8 +27,8 @@ matrix:
         - CXX=g++-7
         - CC=gcc-7
 
-    - python: 3.4
-      name: "python 3.4, g++-7"
+    - python: 3.5
+      name: "python 3.5, g++-7"
       env:
         - CXX=g++-7
         - CC=gcc-7
