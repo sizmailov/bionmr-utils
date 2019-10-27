@@ -3,7 +3,7 @@ language: python
 sudo: false
 
 os: linux
-dist: trusty
+dist: xenial
 
 addons:
   apt:
