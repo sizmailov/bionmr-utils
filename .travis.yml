@@ -34,11 +34,11 @@ matrix:
         - CC=gcc-7
 
 before_script:
+  - flake8
   - git clone https://github.com/sizmailov/pyxmopp_tests_dataset.git tests_dataset
   - python -m pip install flake8
   - export CXX ; export CC
   - python setup.py install
 
 script:
-  - flake8
   - python -m pytest
