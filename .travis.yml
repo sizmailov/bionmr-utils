@@ -34,9 +34,9 @@ matrix:
         - CC=gcc-7
 
 before_script:
-  - flake8
-  - git clone https://github.com/sizmailov/pyxmopp_tests_dataset.git tests_dataset
   - python -m pip install flake8 mypy
+  - python -m flake8
+  - git clone https://github.com/sizmailov/pyxmopp_tests_dataset.git tests_dataset
   - export CXX ; export CC
   - python setup.py install
   - python -m pip install pyxmolpp2-stubs # for mypy
