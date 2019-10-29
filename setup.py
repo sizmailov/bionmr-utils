@@ -5,7 +5,7 @@ with open("README.rst", "r") as fh:
 
 setuptools.setup(
     name="bionmr-utils",
-    version="0.2.0",
+    version="0.2.0-dev",
     author="Sergei Izmailov",
     author_email="sergei.a.izmailov@gmail.com",
     description="Aggregate package of internal bionmr utils",
