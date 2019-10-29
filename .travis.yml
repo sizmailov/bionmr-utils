@@ -34,7 +34,7 @@ matrix:
         - CC=gcc-7
 
 before_script:
-  - python -m pip install flake8 mypy pytest-cov
+  - python -m pip install flake8 mypy pytest-cov codecov
   - python -m flake8
   - git clone https://github.com/sizmailov/pyxmopp_tests_dataset.git tests_dataset
   - export CXX ; export CC
