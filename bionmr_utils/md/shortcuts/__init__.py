@@ -1,4 +1,4 @@
-from typing import Union, Tuple
+from typing import Union, Tuple, Callable
 import pyxmolpp2
 
 
@@ -51,7 +51,7 @@ def traj_from_dir(path: str,
     traj = Trajectory(ref_frame, check_portions_to_match_reference=True)
 
     if filetype == "dat":
-        portion_type = DatFile
+        portion_type = DatFile  # type: Callable[[str], pyxmolpp2.trajectory.TrajectoryPortion]
     elif filetype == "pdb":
         portion_type = lambda filename: PdbFile(filename, altered_records)  # noqa: E731
     elif filetype == "nc":

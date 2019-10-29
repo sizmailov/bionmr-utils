@@ -27,6 +27,7 @@ setuptools.setup(
         "bionmr_utils": ['data/rename_tables/*.csv']
     },
     tests_require=[
-        'pytest'
+        'pytest',
+        'mypy'
     ]
 )

@@ -36,9 +36,11 @@ matrix:
 before_script:
   - flake8
   - git clone https://github.com/sizmailov/pyxmopp_tests_dataset.git tests_dataset
-  - python -m pip install flake8
+  - python -m pip install flake8 mypy
   - export CXX ; export CC
   - python setup.py install
+  - python -m pip install pyxmolpp2-stubs # for mypy
 
 script:
+  - python -m mypy bionmr_utils --ignore-missing-imports
   - python -m pytest

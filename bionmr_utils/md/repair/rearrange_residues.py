@@ -1,10 +1,10 @@
-from typing import Union, List
+from typing import List, Iterator
 from bionmr_utils.md import (Frame, ChainName)
 
 
 def rearrange_residues_in_chains(frame: Frame,
                                  residues_per_chain: List[int],
-                                 chain_names: Union[str, List[str], None] = None,
+                                 chain_names: Iterator[str] = None,
                                  preserve_number_of_residues: bool = True
                                  ):
     """
@@ -21,8 +21,8 @@ def rearrange_residues_in_chains(frame: Frame,
 
     if chain_names is None:
         chain_names = cycle("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789")
-    else:
-        assert len(chain_names) == len(residues_per_chain)
+
+    assert isinstance(chain_names, str) and len(chain_names) == len(residues_per_chain)
 
     n = 0
 
