@@ -1,4 +1,4 @@
-from pyxmolpp2.polymer import (
+from pyxmolpp2.polymer import (  # noqa: F401
     aId,
     aName,
     Atom,
@@ -24,12 +24,12 @@ from pyxmolpp2.polymer import (
     TorsionAngleFactory
 )
 
-from pyxmolpp2.crystal import (
+from pyxmolpp2.crystal import (  # noqa: F401
     BestShiftFinder,
     LatticeVectors
 )
 
-from pyxmolpp2.geometry import (
+from pyxmolpp2.geometry import (  # noqa: F401
     angle as calc_angle,
     AngleValue,
     calc_alignment,
@@ -59,7 +59,7 @@ from pyxmolpp2.geometry import (
     XYZ,
 )
 
-from pyxmolpp2.pdb import (
+from pyxmolpp2.pdb import (  # noqa: F401
     AlteredPdbRecords,
     FieldName as PdbFieldName,
     PdbFile,
@@ -67,17 +67,17 @@ from pyxmolpp2.pdb import (
     StandardPdbRecords
 )
 
-from pyxmolpp2.trajectory import (
+from pyxmolpp2.trajectory import (  # noqa: F401
     Trajectory,
     TrajectoryPortion
 )
 
-from pyxmolpp2.trjtool import (
+from pyxmolpp2.trjtool import (  # noqa: F401
     DatFile
 )
 
-from pyxmolpp2.amber import (
+from pyxmolpp2.amber import (  # noqa: F401
     NetCDFTrajectoryFile
 )
 
-from .shortcuts import traj_from_dir
+from .shortcuts import traj_from_dir  # noqa: F401

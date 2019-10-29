@@ -1,0 +1,54 @@
+language: python
+sudo: false
+os: linux
+dist: xenial
+
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    - deadsnakes
+    packages:
+    - g++-7
+    - gcc-7
+    - cmake
+    - python3.7-dev
+    - python3.5-dev
+    - libnetcdf-dev
+
+matrix:
+  include:
+  - python: 3.7
+    name: python 3.7, g++-7
+    env:
+    - CXX=g++-7
+    - CC=gcc-7
+  - python: 3.5
+    name: python 3.5, g++-7
+    env:
+    - CXX=g++-7
+    - CC=gcc-7
+
+before_script:
+- python -m pip install flake8 mypy pytest-cov codecov
+- python -m flake8
+- git clone https://github.com/sizmailov/pyxmopp_tests_dataset.git tests_dataset
+- export CXX ; export CC
+- python setup.py install
+- python -m pip install pyxmolpp2-stubs
+
+script:
+- python -m mypy bionmr_utils --ignore-missing-imports
+- python -m pytest --cov=bionmr_utils
+
+after_success:
+  - codecov
+
+deploy:
+  - provider: pypi
+    user: __token__
+    password:
+      secure: hQr1Pj3u1iZK7Q7ZnkwVdaZhdEIzrfTct2eTSq3CGyhJ/nrR+RhYz7QzbgzjB2oyUmIVYdVLjVcg/zyIDpk3hM/X/mtkMEb/P0YGbfg9QqJJ+j85sV7N670c2UasuxYIA8jccY60gJrgdcEj76o66zySUKZsjJjxG2uiB/mAl1uVv319GJ/J8U2hiAwjL7jRRm5201XtFJstbzJsFGrkMi8EGBDE3d7MZy8TwZadWJGznHgZLcwkccO2+8Xq7g88tYVvOTKKIpWaAfbVxADJerewMjjfugjq1SgeT0gGEp1u9f3hrmnAPKlC4Gr8WwJfI0SfGO2Is9lRtffmvYkVfPJucBRPwDpbecOpHg7eYr5+ZiUiDQrzQVJoy4EYt64RlT1PdqyHs+0itXbJQRR3zOVfx/JtQQF0jpA7pmDHdZcGSXBlQplDD8CKRla1xvlHHLDWmfDSIc7MvxsmWUikB//hakXqn5+1JxJsBaKvrQD8DD+7rcC7AjtnJSHR8R2ZbMYpLzWVcK3a9wRe6W9oocNjGQI8u/vSZmuU9gwT62t62k8B3QyJ4A8vsNdUI70uwB5Mtp5htN5SkWqXeAt+Adx4Hbsdn+AOi55UDMsLNmCnzYVEKa089Lh2Ig+oKdtzxl9HxG5obReyHh9mAWlIXK4/ZpBJrrUHgLlrm8UqhlA=
+    skip_existing: true
+    on:
+      branch: master
