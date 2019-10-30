@@ -66,7 +66,7 @@ def test_get_mtsl_vectors():
     frame = PdbFile(path).get_frame()
     mtsl_pairs = get_mtsl_vectors(frame)
 
-    np.testing.assert_allclose(mtsl_pairs[0][1].r.to_np, H_1)
-    np.testing.assert_allclose(mtsl_pairs[-1][1].r.to_np, H_56)
+    np.testing.assert_allclose(mtsl_pairs[0][0].r.to_np, H_1)
+    np.testing.assert_allclose(mtsl_pairs[-1][0].r.to_np, H_56)
 
     assert len(mtsl_pairs) == 55
