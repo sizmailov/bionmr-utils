@@ -78,7 +78,7 @@ def get_mtsl_vectors(frame: Frame) -> List[Tuple[UnpairedElectron, Atom]]:
 
     for r in frame.asResidues:
         try:
-            atom_pairs.append((electron, r[AtomName("H")]))
+            atom_pairs.append((r[AtomName("H")], electron))
         except pyxmolpp2.polymer.OutOfRangeResidue:
             pass
 
