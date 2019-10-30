@@ -2,7 +2,7 @@ import os
 import pyxmolpp2
 import numpy as np
 from tqdm import tqdm
-from typing import Tuple, List, Dict, Union, Callable, Optional, Iterable
+from typing import Tuple, List, Union, Callable, Optional, Iterable
 from bionmr_utils.md import LatticeVectors, Degrees, Atom, Frame, VectorXYZ, BestShiftFinder, Trajectory
 
 
@@ -107,7 +107,7 @@ def extract_mass_center(traj: Iterable[Frame],
 def extract_vectors(trajectory: Union[Trajectory, pyxmolpp2.trajectory.TrajectorySlice],
                     get_vectors: Callable[[Frame], List[Tuple[Atom, Atom]]],
                     alignment_selector: Optional[Callable[[Atom], bool]] = None
-                    ) -> Dict[tuple, float]:
+                    ):
     """
     Get vectors from trajectory
 
@@ -132,8 +132,8 @@ def extract_vectors(trajectory: Union[Trajectory, pyxmolpp2.trajectory.Trajector
             pair_vectors = {}
             vectors = {}
             for atom1, atom2 in get_vectors(frame):
-                pair_vectors[atom1.rId, atom1.aName] = (atom1, atom2)
-                vectors[atom1.rId, atom1.aName] = VectorXYZ()
+                pair_vectors[atom1.rId, atom2.aName] = (atom1, atom2)
+                vectors[atom1.rId, atom2.aName] = VectorXYZ()
 
         for (rid, aname), (atom1, atom2) in pair_vectors.items():
             vectors[rid, aname].append(atom1.r - atom2.r)
