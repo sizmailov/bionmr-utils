@@ -49,7 +49,7 @@ def get_NH_vectors(frame: Frame) -> List[Tuple[Atom, Atom]]:
 
 
 class UnpairedElectron:
-    def __init__(nitrogen, oxygen):
+    def __init__(self, nitrogen, oxygen):
         self.nitrogen = nitrogen  # noqa: F821
         self.oxygen = oxygen  # noqa: F821
 
@@ -66,7 +66,7 @@ class UnpairedElectron:
         return (self.nitrogen.r + self.oxygen.r) / 2  # noqa: F821
 
 
-def get_HN_to_mtsl_vectors(frame: Frame) -> Tuple[Atom, Atom]:
+def get_mtsl_vectors(frame: Frame) -> Tuple[Atom, Atom]:
     """
 
     :param frame: Frame
