@@ -1,12 +1,9 @@
 import os
 import pyxmolpp2
-import pandas as pd
 import numpy as np
 from tqdm import tqdm
-from typing import *
-from bionmr_utils.md import *
-from pyxmolpp2.geometry import calc_autocorr_order_2_PRE
-import math
+from typing import Tuple, List, Dict, Union, Callable, Optional, Iterable
+from bionmr_utils.md import LatticeVectors, Degrees, Atom, Frame, VectorXYZ, BestShiftFinder, Trajectory
 
 
 def extract_time_per_file_ns(path_to_trajectory: str) -> float:
@@ -108,9 +105,9 @@ def extract_mass_center(traj: Iterable[Frame],
 
 
 def extract_vectors(trajectory: Union[Trajectory, pyxmolpp2.trajectory.TrajectorySlice],
-                  get_vectors: Callable[[Frame], List[Tuple[Atom, Atom]]],
-                  alignment_selector: Optional[Callable[[Atom], bool]] = None
-                  ) -> Dict[tuple, float]:
+                    get_vectors: Callable[[Frame], List[Tuple[Atom, Atom]]],
+                    alignment_selector: Optional[Callable[[Atom], bool]] = None
+                    ) -> Dict[tuple, float]:
     """
     Get vectors from trajectory
 
