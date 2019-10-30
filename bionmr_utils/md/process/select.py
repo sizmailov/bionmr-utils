@@ -1,3 +1,6 @@
+import pyxmolpp2
+from bionmr_utils.md import Frame, Atom, AtomName, rName
+from typing import List, Tuple
 
 
 def get_methyl_vectors(frame: Frame) -> List[Tuple[Atom, Atom]]:
@@ -46,21 +49,21 @@ def get_NH_vectors(frame: Frame) -> List[Tuple[Atom, Atom]]:
 
 
 class UnpairedElectron:
-    def __init__(N, O):
-        self.N = N
-        self.O = O
+    def __init__(nitrogen, oxygen):
+        self.nitrogen = nitrogen  # noqa: F821
+        self.oxygen = oxygen  # noqa: F821
 
     @property
-    def rId(self):
-        return self.N.rId
+    def rId(self):  # noqa: F821
+        return self.nitrogen.rId  # noqa: F821
 
     @property
-    def aName(self):
+    def aName(self):  # noqa: F821
         return AtomName("e")
 
     @property
-    def r(self):
-        return (self.N.r + self.O.r) / 2
+    def r(self):  # noqa: F821
+        return (self.nitrogen.r + self.oxygen.r) / 2  # noqa: F821
 
 
 def get_HN_to_mtsl_vectors(frame: Frame) -> Tuple[Atom, Atom]:
