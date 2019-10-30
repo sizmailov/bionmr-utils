@@ -70,8 +70,16 @@ def get_HN_to_mtsl_vectors(frame: Frame) -> Tuple[Atom, Atom]:
     """
 
     :param frame: Frame
-    :return: UnpairedElectron
+    :return: list of all backbone atom pairs of given frame.
     """
     r = frame.asResidues.filter(rName == "CML")[0]
+    electron = UnpairedElectron(r[AtomName("N1")], r[AtomName("O1")])
+    atom_pairs = []
 
-    return UnpairedElectron(r[AtomName("N1")], r[AtomName("O1")])
+    for r in frame.asResidues:
+        try:
+            atom_pairs.append((electron, r[AtomName("H")]))
+        except pyxmolpp2.polymer.OutOfRangeResidue:
+            pass
+
+    return atom_pairs
