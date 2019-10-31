@@ -1,13 +1,11 @@
 import numpy as np
-import pandas as pd 
-import os
-from typing import Tuple
+from typing import Tuple, Dict
 from pyxmolpp2.geometry import calc_autocorr_order_2
 
 
 def calc_autocorr(vectors: Dict[tuple, float],
-                  calc_autocorr_func=calc_autocorr_order_2
-                  ) :
+                  calc_autocorr_func=calc_autocorr_order_2,
+                  ):
     """
     Get auto-correlation from trajectory
 
@@ -39,7 +37,7 @@ def calc_mean_square_displacement(time: np.array,
     msds = []
     for int_lag in lag_index:
         lag_time = time[int_lag]
-        msd = ((mass_centers[int_lag:] - mass_centers[:-int_lag])**2).sum(axis=1).mean()
+        msd = ((mass_centers[int_lag:] - mass_centers[:-int_lag]) ** 2).sum(axis=1).mean()
         time_lags.append(lag_time)
         msds.append(msd)
 
@@ -47,9 +45,9 @@ def calc_mean_square_displacement(time: np.array,
 
 
 def calc_mean_square_displacement_by_axes(time: np.array,
-                                  mass_centers: np.array,
-                                  lag_index: np.array
-                                  ) -> Tuple[np.array, np.array]:
+                                          mass_centers: np.array,
+                                          lag_index: np.array
+                                          ) -> Tuple[np.array, np.array]:
     """
     :param time: time-points between mass_centers
     :param mass_centers: N*3 array [x,y,z] columns
@@ -57,7 +55,6 @@ def calc_mean_square_displacement_by_axes(time: np.array,
     :return: tuple of fore arrays (time_lag, msd_x, msd_y, msd_z)
     """
 
-    assert time.shape[0] == mass_centers.shape[0]
     assert mass_centers.shape[1] == 3
 
     mass_centers_x = mass_centers[:, 0]
@@ -71,12 +68,12 @@ def calc_mean_square_displacement_by_axes(time: np.array,
 
     for int_lag in lag_index:
         lag_time = time[int_lag]
-        msd_x = ((mass_centers_x[int_lag:] - mass_centers_x[:-int_lag])**2).mean()
-        msd_y = ((mass_centers_y[int_lag:] - mass_centers_y[:-int_lag])**2).mean()
-        msd_z = ((mass_centers_z[int_lag:] - mass_centers_z[:-int_lag])**2).mean()
+        msd_x = ((mass_centers_x[int_lag:] - mass_centers_x[:-int_lag]) ** 2).mean()
+        msd_y = ((mass_centers_y[int_lag:] - mass_centers_y[:-int_lag]) ** 2).mean()
+        msd_z = ((mass_centers_z[int_lag:] - mass_centers_z[:-int_lag]) ** 2).mean()
         time_lags.append(lag_time)
         msds_x.append(msd_x)
         msds_y.append(msd_y)
         msds_z.append(msd_z)
 
-    return np.array(time_lags), np.array(msds_x),  np.array(msds_y), np.array(msds_z)
+    return np.array(time_lags), np.array(msds_x), np.array(msds_y), np.array(msds_z)
