@@ -93,7 +93,6 @@ def extract_mass_center(traj: Iterable[Frame],
         if prev_cm:
             current_cm += bsf.find_best_shift(prev_cm, current_cm)[1]
 
-        time_per_file = Trajectory.extract_time_per_file_ns
         time.append(frame.index * time_per_file)
         mass_centers.append(current_cm)
 
