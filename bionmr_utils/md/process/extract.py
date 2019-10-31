@@ -124,8 +124,8 @@ def extract_vectors(trajectory: Union[Trajectory, pyxmolpp2.trajectory.Trajector
     for frame in tqdm(trajectory):
         if alignment_selector is not None:
             if alignment_atoms is None:
-                alignment_atoms = frame.asAtoms.filter(alignment_selector)
                 frame_atoms = frame.asAtoms
+                alignment_atoms = frame_atoms.filter(alignment_selector)
             frame_atoms.transform(alignment_atoms.alignment_to(ref_alignment_atoms))
         if pair_vectors is None:
             pair_vectors = {}
