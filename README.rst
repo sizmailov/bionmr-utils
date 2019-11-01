@@ -1,5 +1,5 @@
 
-.. image:: https://img.shields.io/travis/sizmailov/bionmr-utils/master.svg?logo=travis
+.. image:: https://img.shields.io/travis/com/sizmailov/bionmr-utils/master.svg?logo=travis
     :alt: master status
     :target: https://travis-ci.com/sizmailov/bionmr-utils
 
