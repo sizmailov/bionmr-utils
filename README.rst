@@ -5,7 +5,7 @@
 
 .. image:: https://img.shields.io/pypi/v/bionmr-utils.svg?logo=PyPI&logoColor=white
     :alt: pypi package
-    :target: https://badge.fury.io/py/pyxmolpp2
+    :target: https://pypi.org/project/bionmr-utils/
 
 .. image:: https://codecov.io/gh/sizmailov/bionmr-utils/branch/master/graph/badge.svg
   :alt: coverage
