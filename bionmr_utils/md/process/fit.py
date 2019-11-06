@@ -1,13 +1,12 @@
-from typing import *
 import numpy as np
-from bionmr_utils.md import *
-import os
-import pandas as pd
-import glob
 from scipy.optimize import curve_fit
+from typing import Tuple, List, Union, Iterable
 
 
-def fit_limit(data: List[Union[float, int]], window_size=50, pos_diff_ratio=0.5) -> int:
+def fit_limit(data: List[Union[float, int]],
+              window_size=50,
+              pos_diff_ratio=0.5,
+              ) -> int:
     """
     Returns minimum of
     1) number of points at the beginning of `data` for which in every
@@ -22,7 +21,9 @@ def fit_limit(data: List[Union[float, int]], window_size=50, pos_diff_ratio=0.5)
              amount of negative derivatives
     """
 
-    def moving_average(data_set, periods=3):
+    def moving_average(data_set,
+                       periods=3,
+                       ):
         weights = np.ones(periods) / periods
         return np.convolve(data_set, weights, mode='valid')
 
@@ -54,7 +55,7 @@ def __multi_exp_f(x: Union[float, int],
 
 
 def multi_exp_free_amplitude(x: Union[float, int],
-              *args):
+                             *args):
     """
     :param x: argument of some exponential functions composition
     :param args: array of amplitudes and time constants
@@ -72,7 +73,8 @@ def multi_exp_free_amplitude(x: Union[float, int],
     return __multi_exp_f(x, A, TAU, C)
 
 
-def mult_exp_fixed_amplitude_1(x, *args):
+def multi_exp_fixed_amplitude_1(x,
+                                *args):
     TAU = args[0::2]
 
     if len(args) % 2 == 1:
@@ -90,7 +92,7 @@ def fit_auto_correlation(time: List[float],
                          bounds: List[List[List[Union[float, int]]]]) \
         -> Tuple[int, Union[np.ndarray, Iterable, int, float]]:
     """
-    Fit input data with :math:`\sum_n A_n \exp(-t/\\tau_n) + const`
+    Fit input data with :math: sum_n(A_n exp(-t/tau_n) + const)
 
     :param time: time data series
     :param acorr: auto-correlation data series
@@ -100,7 +102,7 @@ def fit_auto_correlation(time: List[float],
 
     p0 = np.mean(bounds, axis=0)[1:]
 
-    args, pcov = curve_fit(mult_exp_fixed_amplitude_1,
+    args, pcov = curve_fit(multi_exp_fixed_amplitude_1,
                            time,
                            acorr,
                            p0=p0,
@@ -122,12 +124,14 @@ def decorated_fit_auto_correlation(time: List[float],
                                    bounds: List[List[Union[float, int]]],
                                    window_size=50,
                                    pos_diff_ratio=0.5,
+                                   fit_func=multi_exp_fixed_amplitude_1
                                    ) \
         -> Tuple[int, Union[np.ndarray, Iterable, int, float]]:
-    def scale_times(args, scale):
+    def scale_times(args,
+                    scale):
         args[1::2] = np.array(args[1::2]) * scale
 
-    scales = np.linspace(1,3,100)
+    scales = np.linspace(1, 3, 100)
 
     limit = fit_limit(acorr,
                       window_size=window_size,
@@ -147,7 +151,7 @@ def decorated_fit_auto_correlation(time: List[float],
             popt = fit_auto_correlation(time, acorr, bounds)
 
             R_square.append(np.sum((np.array(acorr) -
-                                    np.array(multi_exp(time, *popt))) ** 2))
+                                    np.array(fit_func(time, *popt))) ** 2))
             popt_all.append(popt)
         except RuntimeError:
             print("Fit error n={}, scale={}".format(len(bounds[0]) // 2, scale))
@@ -161,21 +165,21 @@ def decorated_fit_auto_correlation(time: List[float],
 
 
 def fit_msd(msd: List[float],
-            time: : List[float],
-            N = 5,): -> Tuple[int, Union[np.ndarray, Iterable, int, float]]:
+            time: List[float],
+            N=5
+            ) -> Tuple[int, Union[np.ndarray, Iterable, int, float]]:
     """
-    Fit input data with :math:`\sum_n A_n \exp(-t/\\tau_n) + const`
-
+    Fit input data with :math: sum_n(A_n exp(-t/tau_n) + const)
     :param msd: msd data
     :param time: time for msd
     :return: Fit curve parameters
     """
 
     def linear_fit(x, k):
-            return k * x
+        return k * x
 
     popts, _ = curve_fit(linear_fit,
-                       time[:N],
-                       msd[:N]
-                       )
+                         time[:N],
+                         msd[:N]
+                         )
     return popts
