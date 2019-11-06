@@ -1,15 +1,17 @@
 import numpy as np
-from typing import Tuple, Dict
-from pyxmolpp2.geometry import calc_autocorr_order_2
+from typing import Tuple, Dict, List, Callable
+from pyxmolpp2.geometry import calc_autocorr_order_2, VectorXYZ
+from pyxmolpp2.polymer import ResidueId, ResidueName
 
 
-def calc_autocorr(vectors: Dict[tuple, float],
-                  calc_autocorr_func=calc_autocorr_order_2,
-                  ):
+def calc_autocorr(vectors: Dict[Tuple[ResidueId, ResidueName], VectorXYZ],
+                  calc_autocorr_func: Callable[[VectorXYZ], List[float]] = calc_autocorr_order_2,
+                  ) -> Dict[Tuple[ResidueId, ResidueName], List[float]]:
     """
     Get auto-correlation from trajectory
 
     :param vectors: dict of (rid, aname): VectorXYZ
+    :calc_autocorr_func: function calculates auto-correlation
     :return dict of (rid, aname): auto-correlation
     """
     autocorr = {(rid, aname): calc_autocorr_func(vector)
@@ -47,12 +49,12 @@ def calc_mean_square_displacement(time: np.array,
 def calc_mean_square_displacement_by_axes(time: np.array,
                                           mass_centers: np.array,
                                           lag_index: np.array
-                                          ) -> Tuple[np.array, np.array]:
+                                          ) -> Tuple[np.array, np.array, np.array, np.array]:
     """
     :param time: time-points between mass_centers
     :param mass_centers: N*3 array [x,y,z] columns
     :param lag_index: int array of time lags between mass_centers
-    :return: tuple of fore arrays (time_lag, msd_x, msd_y, msd_z)
+    :return: tuple of four arrays (time_lag, msd_x, msd_y, msd_z)
     """
 
     assert mass_centers.shape[1] == 3
