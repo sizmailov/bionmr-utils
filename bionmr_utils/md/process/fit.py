@@ -61,7 +61,7 @@ def multi_exp_free_amplitude(x: Union[float, int],
     """
     :param x: argument of some exponential functions composition
     :param args: array of amplitudes and time constants
-    :return: callable __multi_exp
+    :return: callable __multi_exp_f
     """
     TAU = list(args[1::2])
 
@@ -75,8 +75,13 @@ def multi_exp_free_amplitude(x: Union[float, int],
     return __multi_exp_f(x, A, TAU, C)
 
 
-def multi_exp_fixed_amplitude_1(x,
+def multi_exp_fixed_amplitude_1(x: Union[float, int],
                                 *args):
+    """
+    :param x: argument of some exponential functions composition
+    :param args: array of amplitudes and time constants
+    :return: callable __multi_exp_f
+    """
     TAU = args[0::2]
 
     if len(args) % 2 == 1:
@@ -129,6 +134,17 @@ def decorated_fit_auto_correlation(time: List[float],
                                    fit_func=multi_exp_fixed_amplitude_1
                                    ) \
         -> Tuple[int, Union[np.ndarray, Iterable, int, float]]:
+    """
+    Fit input data with :math: sum_n(A_n exp(-t/tau_n) + const)
+
+    :param time: time data series
+    :param acorr: auto-correlation data series
+    :param bounds: curve parameters bounds
+    :param window_size: number of points in window
+    :param pos_diff_ratio: allowed ratio of positive diff in window
+    :fit_func: function for fit data
+    :return: Fit curve parameters
+    """
     def scale_times(args,
                     scale):
         args[1::2] = np.array(args[1::2]) * scale
