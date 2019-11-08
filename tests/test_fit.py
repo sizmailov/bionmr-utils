@@ -1,13 +1,14 @@
-from bionmr_utils.md.process.fit import fit_auto_correlation, decorated_fit_auto_correlation, fit_msd, fit_limit
+from bionmr_utils.md.process.fit import fit_auto_correlation, bounds_scaled_fit_auto_correlation
+from bionmr_utils.md.process.fit import fit_msd, estimate_acorr_fitting_limit
 import numpy as np
 
 
-def test_fit_limit():
+def test_estimate_acorr_fitting_limit():
     data1 = np.array([8, 7, 6, 5, 4, 5, 6, 7, 8, 3, 2, -1])
     data2 = np.array([8, -7, 6, 5, 4, 5, 6, 7, 8, 3, 2, -1])
 
-    assert fit_limit(data1, window_size=5) == 4
-    assert fit_limit(data2, window_size=5) == 1
+    assert estimate_acorr_fitting_limit(data1, window_size=5) == 4
+    assert estimate_acorr_fitting_limit(data2, window_size=5) == 1
 
 
 def test_fit_autocorrelation():
@@ -18,10 +19,10 @@ def test_fit_autocorrelation():
     np.testing.assert_allclose(result, np.array([0.5, 0.5, 0.5, 5]), rtol=1e-03)
 
 
-def test_decorated_fit_auto_correlation():
+def test_bounds_scaled_fit_auto_correlation():
     x = np.linspace(1, 1000, 1000)
     y = 0.5 * np.exp(-x / 0.5) + 0.5 * np.exp(-x / 5)
-    result = decorated_fit_auto_correlation(x, y, bounds=[[0, 0, 0, 1], [1, 0.5, 1, 6]])[1]
+    result = bounds_scaled_fit_auto_correlation(x, y, bounds=[[0, 0, 0, 1], [1, 0.5, 1, 6]])[1]
 
     np.testing.assert_allclose(result, np.array([0.5, 0.5, 0.5, 5]), rtol=1e-03)
 

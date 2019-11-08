@@ -3,10 +3,10 @@ from scipy.optimize import curve_fit
 from typing import Tuple, List, Union, Iterable
 
 
-def fit_limit(data: List[Union[float, int]],
-              window_size=50,
-              pos_diff_ratio=0.5,
-              ) -> int:
+def estimate_acorr_fitting_limit(data: List[Union[float, int]],
+                                 window_size=50,
+                                 pos_diff_ratio=0.5,
+                                 ) -> int:
     """
     Returns minimum of
     1) number of points at the beginning of `data` for which in every
@@ -21,9 +21,7 @@ def fit_limit(data: List[Union[float, int]],
              amount of negative derivatives
     """
 
-    def moving_average(data_set,
-                       periods=3,
-                       ):
+    def moving_average(data_set, periods=3):
         weights = np.ones(periods) / periods
         return np.convolve(data_set, weights, mode='valid')
 
@@ -56,8 +54,7 @@ def __multi_exp_f(x: Union[float, int],
     ) + C
 
 
-def multi_exp_free_amplitude(x: Union[float, int],
-                             *args):
+def multi_exp_unfixed_amplitude(x: Union[float, int], *args):
     """
     :param x: argument of some exponential functions composition
     :param args: array of amplitudes and time constants
@@ -75,8 +72,7 @@ def multi_exp_free_amplitude(x: Union[float, int],
     return __multi_exp_f(x, A, TAU, C)
 
 
-def multi_exp_fixed_amplitude_1(x: Union[float, int],
-                                *args):
+def multi_exp_fixed_amplitude_1(x: Union[float, int], *args):
     """
     :param x: argument of some exponential functions composition
     :param args: array of amplitudes and time constants
@@ -99,7 +95,7 @@ def fit_auto_correlation(time: List[float],
                          bounds: List[List[List[Union[float, int]]]]) \
         -> Tuple[int, Union[np.ndarray, Iterable, int, float]]:
     """
-    Fit input data with :math: sum_n(A_n exp(-t/tau_n) + const)
+    Fit input data with :math:`\\sum_n A_n \\exp(-t/\\tau_n) + const`
 
     :param time: time data series
     :param acorr: auto-correlation data series
@@ -126,16 +122,16 @@ def fit_auto_correlation(time: List[float],
     return [A0] + list(args)
 
 
-def decorated_fit_auto_correlation(time: List[float],
-                                   acorr: List[float],
-                                   bounds: List[List[Union[float, int]]],
-                                   window_size=50,
-                                   pos_diff_ratio=0.5,
-                                   fit_func=multi_exp_fixed_amplitude_1
-                                   ) \
+def bounds_scaled_fit_auto_correlation(time: List[float],
+                                       acorr: List[float],
+                                       bounds: List[List[Union[float, int]]],
+                                       window_size=50,
+                                       pos_diff_ratio=0.5,
+                                       fit_func=multi_exp_fixed_amplitude_1
+                                       ) \
         -> Tuple[int, Union[np.ndarray, Iterable, int, float]]:
     """
-    Fit input data with :math: sum_n(A_n exp(-t/tau_n) + const)
+    Fit input data with :math:`\\sum_n A_n \\exp(-t/\\tau_n) + const`
 
     :param time: time data series
     :param acorr: auto-correlation data series
@@ -145,16 +141,17 @@ def decorated_fit_auto_correlation(time: List[float],
     :fit_func: function for fit data
     :return: Fit curve parameters
     """
+
     def scale_times(args,
                     scale):
         args[1::2] = np.array(args[1::2]) * scale
 
     scales = np.linspace(1, 3, 100)
 
-    limit = fit_limit(acorr,
-                      window_size=window_size,
-                      pos_diff_ratio=pos_diff_ratio
-                      )
+    limit = estimate_acorr_fitting_limit(acorr,
+                                         window_size=window_size,
+                                         pos_diff_ratio=pos_diff_ratio
+                                         )
 
     time = time[:limit]
     acorr = acorr[:limit]
@@ -185,7 +182,7 @@ def fit_msd(msd: List[float],
             N=5
             ) -> Tuple[int, Union[np.ndarray, Iterable, int, float]]:
     """
-    Fit input data with :math: sum_n(A_n exp(-t/tau_n) + const)
+    Fit input data with :math:`\\sum_n A_n \\exp(-t/\\tau_n) + const`
     :param msd: msd data
     :param time: time for msd
     :return: Fit curve parameters
