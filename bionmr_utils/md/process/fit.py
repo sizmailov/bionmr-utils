@@ -31,6 +31,8 @@ def fit_limit(data: List[Union[float, int]],
     pos_diff = (diff > 0).astype(int)
     pos_diff_avg = moving_average(pos_diff, window_size)
     index = np.argmax(pos_diff_avg >= pos_diff_ratio) + window_size // 2
+    if sum(pos_diff_avg) == 0.0:
+        index = len(data)
     first_negative = np.array(data < 0).argmax()
     if data[first_negative] >= 0:
         first_negative = len(data)
@@ -49,7 +51,7 @@ def __multi_exp_f(x: Union[float, int],
     :param C: free element
     :return: sum exponential functions composition
     """
-    return np.sum(
+    return sum(
         (a * np.exp(-x / tau)) for a, tau in zip(A, TAU)
     ) + C
 
@@ -149,9 +151,7 @@ def decorated_fit_auto_correlation(time: List[float],
         scale_times(bounds[1], scale)
         try:
             popt = fit_auto_correlation(time, acorr, bounds)
-
-            R_square.append(np.sum((np.array(acorr) -
-                                    np.array(fit_func(time, *popt))) ** 2))
+            R_square.append(sum((np.array(acorr) - np.array(fit_func(time, *popt))) ** 2))
             popt_all.append(popt)
         except RuntimeError:
             print("Fit error n={}, scale={}".format(len(bounds[0]) // 2, scale))
