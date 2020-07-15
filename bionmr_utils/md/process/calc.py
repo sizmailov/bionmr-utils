@@ -1,12 +1,14 @@
 import numpy as np
+import pandas as pd
 from typing import Tuple, Dict, List, Callable
-from pyxmolpp2.geometry import calc_autocorr_order_2, VectorXYZ
-from pyxmolpp2.polymer import ResidueId, ResidueName
+from pyxmolpp2 import calc_autocorr_order_2
+from tqdm import tqdm
 
 
-def calc_autocorr(vectors: Dict[Tuple[ResidueId, ResidueName], VectorXYZ],
-                  calc_autocorr_func: Callable[[VectorXYZ], List[float]] = calc_autocorr_order_2,
-                  ) -> Dict[Tuple[ResidueId, ResidueName], List[float]]:
+def calc_autocorr(vectors: Dict[Tuple[str, str], np.ndarray],
+                  calc_autocorr_func: Callable[[np.ndarray], List[float]] = calc_autocorr_order_2,
+                  limit=-1
+                  ) -> Dict[Tuple[str, str], List[float]]:
     """
     Get auto-correlation from trajectory
 
@@ -14,11 +16,34 @@ def calc_autocorr(vectors: Dict[Tuple[ResidueId, ResidueName], VectorXYZ],
     :calc_autocorr_func: function calculates auto-correlation
     :return dict of (rid, aname): auto-correlation
     """
-    autocorr = {(rid, aname): calc_autocorr_func(vector)
+    autocorr = {(rid, aname): calc_autocorr_func(vector, limit)
                 for (rid, aname), vector in vectors.items()
                 }
-
     return autocorr
+
+
+def calc_inertia_tensor_vectors_autocorr(trajectory,
+                                         matrix3d_all_rotations,
+                                         ):
+    nodes = pd.read_csv("/home/sergei/GB1/nodes/64.txt.csv", names=["x", "y", "z", "w"])
+    xyz = nodes[["x", "y", "z"]].values
+    weights = nodes["w"]
+
+    vectors = xyz.dot(matrix3d_all_rotations)
+    numbers_of_vector = vectors.shape[0]
+
+    sum_acorr = None
+
+    for i, number_of_vector in enumerate(tqdm(range(numbers_of_vector), desc="calc autocorr")):
+        w = weights[i]
+        autocorr = np.array(calc_autocorr_order_2(vectors[number_of_vector, :, :], 1000 * 100)) * w
+        if sum_acorr is None:
+            sum_acorr = autocorr
+        else:
+            sum_acorr += autocorr
+    avg_acorr = sum_acorr / 4 / np.pi
+
+    return np.array(avg_acorr)
 
 
 def calc_mean_square_displacement(time: np.array,
