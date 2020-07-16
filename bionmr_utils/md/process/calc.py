@@ -35,7 +35,7 @@ def calc_inertia_tensor_vectors_autocorr(rotation_matrices: np.array,
                           where (x, y, z) coordinatesand and weights (w) of vectors
                           corresponding to the directions in space along which rotation is considered
     :limit: length of auto-correlation function
-    :return dict of (rid, aname): auto-correlation
+    :return: auto-correlation function
     """
     nodes = pd.read_csv(path_to_vectors_csv)
     xyz = nodes[["x", "y", "z"]].values
