@@ -76,7 +76,7 @@ def get_NH_selection(frame: Frame) -> Tuple[AtomSelection, AtomSelection]:
 
 def get_mtsl_selection(frame: Frame,
                        label_name="CML",
-                       ) -> Tuple[AtomSelection, UnpairedElectronSelection]:
+                       ):
     """
 
     :param frame: Frame
