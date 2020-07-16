@@ -16,16 +16,16 @@ def test_extract_NH_vectors():
     NH_56 = N_56 - H_56
 
     frames = PdbFile(path).frames()
-    vectors_dict = list(extract_vectors(frames, get_selection=get_NH_selection))[0]
+    rids_anames_pairs, vectors_generator = extract_vectors(frames, get_selection=get_NH_selection)
+    vectors = list(vectors_generator)[0]
 
-    assert (len(vectors_dict)) == 55
+    assert (len(vectors)) == 55
 
-    keys = sorted(list(vectors_dict.keys()))
-    np.testing.assert_allclose(vectors_dict[keys[0]], NH_1)
-    np.testing.assert_allclose(vectors_dict[keys[-1]], NH_56)
+    np.testing.assert_allclose(vectors[0], NH_1)
+    np.testing.assert_allclose(vectors[-1], NH_56)
 
-    assert keys[0][0] == 2
-    assert keys[-1][0] == 56
+    assert rids_anames_pairs[0][0] == 2
+    assert rids_anames_pairs[-1][0] == 56
 
 
 def test_extract_methyl_vectors():
@@ -40,16 +40,16 @@ def test_extract_methyl_vectors():
     CH3_THR55 = CG2_THR55 - HG21_THR55
 
     frames = PdbFile(path).frames()
-    vectors_dict = list(extract_vectors(frames, get_selection=get_methyl_selection))[0]
+    rids_anames_pairs, vectors_generator = list(extract_vectors(frames, get_selection=get_methyl_selection))
+    vectors = list(vectors_generator)[0]
 
-    assert (len(vectors_dict)) == 33
+    assert (len(vectors)) == 33
 
-    keys = sorted(list(vectors_dict.keys()))
-    np.testing.assert_allclose(vectors_dict[keys[0]], CH3_THR2)
-    np.testing.assert_allclose(vectors_dict[keys[-1]], CH3_THR55)
+    np.testing.assert_allclose(vectors[0], CH3_THR2)
+    np.testing.assert_allclose(vectors[-1], CH3_THR55)
 
-    assert keys[0][0] == 2
-    assert keys[-1][0] == 55
+    assert rids_anames_pairs[0][0] == 2
+    assert rids_anames_pairs[-1][0] == 55
 
 
 def test_extract_mtsl_vectors():
@@ -66,12 +66,13 @@ def test_extract_mtsl_vectors():
     mtsl_H_56 = electron - H_56
 
     frame = PdbFile(path).frames()
-    vectors_dict = list(extract_vectors(frame, get_selection=get_mtsl_selection))[0]
-    assert (len(vectors_dict)) == 55
+    rids_anames_pairs, vectors_generator = list(extract_vectors(frame, get_selection=get_mtsl_selection))
+    vectors = list(vectors_generator)[0]
 
-    keys = sorted(list(vectors_dict.keys()))
-    np.testing.assert_allclose(vectors_dict[keys[0]], mtsl_H_1)
-    np.testing.assert_allclose(vectors_dict[keys[-1]], mtsl_H_56)
+    assert (len(vectors)) == 55
 
-    assert keys[0][0] == 2
-    assert keys[-1][0] == 56
+    np.testing.assert_allclose(vectors[0], mtsl_H_1)
+    np.testing.assert_allclose(vectors[-1], mtsl_H_56)
+
+    assert rids_anames_pairs[0][0] == 2
+    assert rids_anames_pairs[-1][0] == 56

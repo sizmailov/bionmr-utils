@@ -1,8 +1,8 @@
 import os
 import numpy as np
 from tqdm import tqdm
-from typing import Tuple, List, Union, Callable, Optional, Iterable, Dict
-from pyxmolpp2 import Trajectory, Frame, Atom, XYZ, aName
+from typing import Tuple, List, Union, Callable, Optional, Iterable, Iterator
+from pyxmolpp2 import Trajectory, AtomSelection, Frame, Atom, XYZ, aName
 from pyxmolpp2.pipe import Align
 
 
@@ -91,37 +91,33 @@ def extract_mass_center(trajectory: Union[Trajectory, Trajectory.Slice],
 
 
 def extract_vectors(trajectory: Union[Trajectory, Trajectory.Slice, List[Frame]],
-                    get_selection: Callable[[Frame], Tuple[Atom, Atom]],
+                    get_selection: Callable[[Frame], Tuple[AtomSelection, AtomSelection]],
                     alignment_selector: Optional[Callable[[Atom], bool]] = None,
-                    ) -> Iterable[Dict[Tuple[str, str], np.array]]:
+                    ) -> Tuple[List[Tuple[int, str]], Iterable[np.array]]:
     """
     Get vectors from trajectory
 
     :param trajectory:
     :param get_selection: function to determinate tracked vector
     :param alignment_selector: Optional atom selector for frame alignment
-    :return dict of (rid, aname): auto-correlation
+    :return: residue ids and atom names corresponding to atom in the end of chosen vector,
+             generator of vectors - list of (x, y, z) coordinates of chosen vectors per frame in trajectory
     """
 
-    all_atoms = None
-    vectors_dict = None
     if alignment_selector:
         trajectory = trajectory | Align(by=alignment_selector)
 
-    for frame in trajectory:
+    iterator = iter(trajectory)
+    frame = next(iterator)
 
-        if all_atoms is None:
-            all_atoms = frame.atoms
+    atoms_selection_1, atoms_selection_2 = get_selection(frame)
+    atoms_selection_1_coords, atoms_selection_2_coords = atoms_selection_1.coords, atoms_selection_2.coords
+    rids_anames_pairs = [(atom.residue.id.serial, atom.name) for atom in atoms_selection_2]
 
-        if vectors_dict is None:
-            vectors_dict_generator = {}
+    def generator_of_vectors() -> Iterator[np.array]:
+        # yield vector from first iteration
+        yield atoms_selection_1_coords.values - atoms_selection_2_coords.values
+        for _ in iterator:
+            yield atoms_selection_1_coords.values - atoms_selection_2_coords.values
 
-        atoms_selection_1, atoms_selection_2 = get_selection(frame)
-        annotation = [(atom.residue.id.serial, atom.name) for atom in atoms_selection_2]
-        distances = atoms_selection_1.coords.values - atoms_selection_2.coords.values
-
-        assert len(distances) == len(annotation)
-
-        vectors_dict_generator = dict(zip(annotation, distances))
-
-        yield vectors_dict_generator
+    return rids_anames_pairs, generator_of_vectors()
