@@ -117,16 +117,10 @@ def extract_vectors(trajectory: Union[Trajectory, Trajectory.Slice, List[Frame]]
             vectors_dict_generator = {}
 
         atoms_selection_1, atoms_selection_2 = get_selection(frame)
-
-        atom2_names = [all_atoms[index].name for index in atoms_selection_2.index]
-        r_ids = [all_atoms[index].residue.id.serial for index in atoms_selection_2.index]
-
-        assert len(atom2_names) == len(r_ids)
-
-        annotation = zip(r_ids, atom2_names)
+        annotation = [(atom.residue.id.serial, atom.name) for atom in atoms_selection_2]
         distances = atoms_selection_1.coords.values - atoms_selection_2.coords.values
 
-        assert len(distances) == len(atom2_names)
+        assert len(distances) == len(annotation)
 
         vectors_dict_generator = dict(zip(annotation, distances))
 
