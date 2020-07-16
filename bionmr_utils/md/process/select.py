@@ -2,19 +2,6 @@ from pyxmolpp2 import AtomSelection, Frame, rId, aId, aName, rName
 from typing import Tuple
 
 
-def get_NH_selection(frame: Frame) -> Tuple[AtomSelection, AtomSelection]:
-    """
-
-    :param frame: Frame
-    :return: tuple of all backbone atom pairs of given frame.
-    """
-    atom_pairs_selection = (frame.atoms.filter((aName == "N") & (rId > 1)),
-                            frame.atoms.filter((aName == "H") & (rId > 1))
-                            )
-
-    return atom_pairs_selection
-
-
 def get_methyl_selection(frame: Frame) -> Tuple[AtomSelection, AtomSelection]:
     """
 
@@ -72,6 +59,19 @@ class UnpairedElectronSelection:
     @property
     def index(self):
         return self.nitrogen_selection.index
+
+
+def get_NH_selection(frame: Frame) -> Tuple[AtomSelection, AtomSelection]:
+    """
+
+    :param frame: Frame
+    :return: tuple of all backbone atom pairs of given frame.
+    """
+    atom_pairs_selection = (frame.atoms.filter((aName == "N") & (rId > 1)),
+                            frame.atoms.filter((aName == "H") & (rId > 1))
+                            )
+
+    return atom_pairs_selection
 
 
 def get_mtsl_selection(frame: Frame,
