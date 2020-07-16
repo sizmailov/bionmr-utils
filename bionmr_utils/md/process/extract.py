@@ -1,7 +1,7 @@
 import os
 import numpy as np
 from tqdm import tqdm
-from typing import Tuple, List, Union, Callable, Optional, Generator, Dict
+from typing import Tuple, List, Union, Callable, Optional, Iterable, Dict
 from pyxmolpp2 import Trajectory, Frame, Atom, XYZ, aName
 from pyxmolpp2.pipe import Align
 
@@ -28,15 +28,15 @@ def extract_time_per_file_ns(path_to_trajectory: str,
     return time_step_ns
 
 
-def extract_matrix3d(trajectory: Union[Trajectory, Trajectory.Slice],
+def extract_rotation_matrices(trajectory: Union[Trajectory, Trajectory.Slice],
                      atom_selector: Callable[[Atom], bool] = (aName == "CA")
                      ) -> np.array:
     """
-    Extract time step from trajectory
+    Extract rotation matrices
 
     :param trajectory: trajectory or trajectory slice
     :param atom_selector: selector for atom
-    :return 3D matrix of all rotations, 1D - number of step, (2D, 3D) - matrix of one rotation
+    :return: rotation matrices as numpy array of shape (N, 3, 3), where N is length of trajectory
 
     """
     matrix3d_all_rotations = []
@@ -93,7 +93,7 @@ def extract_mass_center(trajectory: Union[Trajectory, Trajectory.Slice],
 def extract_vectors(trajectory: Union[Trajectory, Trajectory.Slice, List[Frame]],
                     get_selection: Callable[[Frame], Tuple[Atom, Atom]],
                     alignment_selector: Optional[Callable[[Atom], bool]] = None,
-                    ) -> Generator[Dict, Tuple[str, str], np.array]:
+                    ) -> Iterable[Dict[Tuple[str, str], np.array]]:
     """
     Get vectors from trajectory
 
