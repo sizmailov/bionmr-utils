@@ -32,7 +32,7 @@ def calc_inertia_tensor_vectors_autocorr(rotation_matrices: np.array,
 
     :rotation matrices: rotation matrices as numpy array of shape (N, 3, 3), where N is length of trajectory
     :path_to_vectors_csv: path to csv file with coulumn names (x, y, z, w),
-                          where (x, y, z) coordinatesand and weights (w) of vectors
+                          where (x, y, z) coordinates and and weights (w) of vectors
                           corresponding to the directions in space along which rotation is considered
     :limit: length of auto-correlation function
     :return: auto-correlation function
@@ -41,21 +41,15 @@ def calc_inertia_tensor_vectors_autocorr(rotation_matrices: np.array,
     xyz = nodes[["x", "y", "z"]].values
     weights = nodes["w"]
 
-    vectors = xyz.dot(rotation_matrices)
-    numbers_of_vector = vectors.shape[0]
+    number_of_vectors = rotation_matrices.shape[0]
+    sum_acorr = np.zeros(number_of_vectors)
 
-    sum_acorr = None
+    for r, w in tqdm(zip(xyz, weights), desc="calc autocorr"):
+        vectors = r.reshape((3, 1)).dot(rotation_matrices)
+        autocorr = np.array(calc_autocorr_order_2(vectors, limit=limit))
+        sum_acorr += autocorr * w
 
-    for i, number_of_vector in enumerate(tqdm(range(numbers_of_vector), desc="calc autocorr")):
-        w = weights[i]
-        autocorr = np.array(calc_autocorr_order_2(vectors[number_of_vector, :, :], limit=limit)) * w
-        if sum_acorr is None:
-            sum_acorr = autocorr
-        else:
-            sum_acorr += autocorr
-    avg_acorr = sum_acorr / 4 / np.pi
-
-    return np.array(avg_acorr)
+    return np.array(sum_acorr / 4 / np.pi)
 
 
 def calc_mean_square_displacement(time: np.array,
