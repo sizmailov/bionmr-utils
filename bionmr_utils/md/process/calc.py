@@ -1,5 +1,4 @@
 import numpy as np
-import pandas as pd
 from typing import Tuple, Dict, List, Callable
 from pyxmolpp2 import calc_autocorr_order_2
 from tqdm import tqdm
@@ -24,27 +23,25 @@ def calc_autocorr(vectors: Dict[Tuple[str, str], np.ndarray],
 
 
 def calc_inertia_tensor_vectors_autocorr(rotation_matrices: np.array,
-                                         path_to_vectors_csv: str,
+                                         rotation_axes: np.array,
+                                         rotation_axes_weights: np.array,
                                          limit: int = -1,
                                          ) -> np.array:
     """
     Get auto-correlation for inertia vectors
 
     :rotation matrices: rotation matrices as numpy array of shape (N, 3, 3), where N is length of trajectory
-    :path_to_vectors_csv: path to csv file with coulumn names (x, y, z, w),
-                          where (x, y, z) coordinates and and weights (w) of vectors
-                          corresponding to the directions in space along which rotation is considered
+    :rotation_axes: (x, y, z) coordinates of axes as numpy array of shape (N, 3), where N is number of axes
+                    corresponding to the directions in space along which rotation is considered
+    :rotation_axes_weights: significance of the rotation axes as numpy array of shape (N, 1)
     :limit: length of auto-correlation function
     :return: auto-correlation function
     """
-    nodes = pd.read_csv(path_to_vectors_csv)
-    xyz = nodes[["x", "y", "z"]].values
-    weights = nodes["w"]
 
     number_of_vectors = rotation_matrices.shape[0]
     sum_acorr = np.zeros(number_of_vectors)
 
-    for r, w in tqdm(zip(xyz, weights), desc="calc autocorr"):
+    for r, w in tqdm(zip(rotation_axes, rotation_axes_weights), desc="calc autocorr"):
         vectors = r.reshape((3, 1)).dot(rotation_matrices)
         autocorr = np.array(calc_autocorr_order_2(vectors, limit=limit))
         sum_acorr += autocorr * w
