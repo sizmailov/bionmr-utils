@@ -82,8 +82,9 @@ def get_mtsl_selection(frame: Frame,
     :param frame: Frame
     :return: tuple of all backbone atom pairs of given frame.
     """
-    label_atoms = frame.atoms.filter(rName == "CML")
+    label_atoms = frame.atoms.filter(rName == label_name)
     electron = UnpairedElectronSelection(label_atoms.filter(aName == "N1"), label_atoms.filter(aName == "O1"))
+    assert electron.size == 1
 
     atom_pairs_selection = (electron, frame.atoms.filter(aName == "H"))
 
