@@ -14,6 +14,7 @@ def calc_autocorr(vectors: Dict[Tuple[str, str], np.ndarray],
 
     :param vectors: dict of (rid, aname): VectorXYZ
     :calc_autocorr_func: function calculates auto-correlation
+    :limit: length of auto-correlation function
     :return dict of (rid, aname): auto-correlation
     """
     autocorr = {(rid, aname): calc_autocorr_func(vector, limit)
@@ -22,21 +23,32 @@ def calc_autocorr(vectors: Dict[Tuple[str, str], np.ndarray],
     return autocorr
 
 
-def calc_inertia_tensor_vectors_autocorr(trajectory,
-                                         matrix3d_all_rotations,
-                                         ):
-    nodes = pd.read_csv("/home/sergei/GB1/nodes/64.txt.csv", names=["x", "y", "z", "w"])
+def calc_inertia_tensor_vectors_autocorr(rotation_matrices: np.array,
+                                         path_to_vectors_csv: str,
+                                         limit: int = -1,
+                                         ) -> np.array:
+    """
+    Get auto-correlation for inertia vectors
+
+    :rotation matrices: rotation matrices as numpy array of shape (N, 3, 3), where N is length of trajectory
+    :path_to_vectors_csv: path to csv file with coulumn names (x, y, z, w),
+                          where (x, y, z) coordinatesand and weights (w) of vectors
+                          corresponding to the directions in space along which rotation is considered
+    :limit: length of auto-correlation function
+    :return dict of (rid, aname): auto-correlation
+    """
+    nodes = pd.read_csv(path_to_vectors_csv)
     xyz = nodes[["x", "y", "z"]].values
     weights = nodes["w"]
 
-    vectors = xyz.dot(matrix3d_all_rotations)
+    vectors = xyz.dot(rotation_matrices)
     numbers_of_vector = vectors.shape[0]
 
     sum_acorr = None
 
     for i, number_of_vector in enumerate(tqdm(range(numbers_of_vector), desc="calc autocorr")):
         w = weights[i]
-        autocorr = np.array(calc_autocorr_order_2(vectors[number_of_vector, :, :], 1000 * 100)) * w
+        autocorr = np.array(calc_autocorr_order_2(vectors[number_of_vector, :, :], limit=limit)) * w
         if sum_acorr is None:
             sum_acorr = autocorr
         else:
