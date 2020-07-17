@@ -40,7 +40,7 @@ def test_calc_autocorr():
     acorr_order_2 = np.array([[1.0, 0.99566433, 0.99407925]])
     acorr_bionmr_utils = calc_autocorr(vectors)
 
-    assert (1, "tests") == acorr_bionmr_utils.keys()
+    assert [(1, "tests")] == list(acorr_bionmr_utils.keys())
     np.testing.assert_allclose(acorr_order_2, list(acorr_bionmr_utils.values()))
 
 

@@ -79,12 +79,12 @@ def test_extract_mtsl_vectors():
 
 
 def test_extract_rotation_matrices():
-    path_to_trajectory_dir = "../tests_dataset/amber/GB1_F30C_MTSL/"
+    path_to_trajectory_dir = "tests_dataset/amber/GB1_F30C_MTSL/"
 
     trajectory = Trajectory(PdbFile(path_to_trajectory_dir + "/box.pdb").frames()[0])
     trajectory.extend(AmberNetCDF(path_to_trajectory_dir + "/GB1_F30C_MTSL_10_frames.nc"))
     rotation_matrices = extract_rotation_matrices(trajectory=trajectory)
-    vector_turn_0 = np.array([[1, 1, 1]])
+    vector_turn_0 = np.array([1, 1, 1])
     vector_turn_9 = np.array([1.03029724, 0.97984542, 0.98913627])
 
     np.testing.assert_allclose(vector_turn_0, vector_turn_0.dot(rotation_matrices[0]))
