@@ -4,7 +4,7 @@ from pyxmolpp2 import calc_autocorr_order_2
 from tqdm import tqdm
 
 
-def calc_autocorr(vectors: Dict[Tuple[str, str], np.ndarray],
+def calc_autocorr(vectors: Dict[Tuple[int, str], np.ndarray],
                   calc_autocorr_func: Callable[[np.ndarray], List[float]] = calc_autocorr_order_2,
                   limit=-1
                   ) -> Dict[Tuple[str, str], List[float]]:
@@ -42,7 +42,7 @@ def calc_inertia_tensor_vectors_autocorr(rotation_matrices: np.array,
     sum_acorr = np.zeros(number_of_vectors)
 
     for r, w in tqdm(zip(rotation_axes, rotation_axes_weights), desc="calc autocorr"):
-        vectors = r.reshape((3, 1)).dot(rotation_matrices)
+        vectors = rotation_matrices.dot(r)
         autocorr = np.array(calc_autocorr_order_2(vectors, limit=limit))
         sum_acorr += autocorr * w
 
