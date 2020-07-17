@@ -40,8 +40,7 @@ def extract_rotation_matrices(trajectory: Union[Trajectory, Trajectory.Slice],
 
     """
     matrix3d_all_rotations = []
-    if atom_selector:
-        trajectory = trajectory | Align(by=atom_selector)
+    trajectory = trajectory | Align(by=atom_selector)
 
     ref = trajectory[0]
     ref_ca = ref.atoms.filter(atom_selector)

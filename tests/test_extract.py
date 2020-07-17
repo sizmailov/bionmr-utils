@@ -1,6 +1,6 @@
-from pyxmolpp2 import PdbFile
+from pyxmolpp2 import PdbFile, Trajectory, AmberNetCDF
 from bionmr_utils.md.process.select import get_mtsl_selection, get_NH_selection, get_methyl_selection
-from bionmr_utils.md.process.extract import extract_vectors
+from bionmr_utils.md.process.extract import extract_vectors, extract_rotation_matrices
 import numpy as np
 
 
@@ -76,3 +76,16 @@ def test_extract_mtsl_vectors():
 
     assert rids_anames_pairs[0][0] == 2
     assert rids_anames_pairs[-1][0] == 56
+
+
+def test_extract_rotation_matrices():
+    path_to_trajectory_dir = "../tests_dataset/amber/GB1_F30C_MTSL/"
+
+    trajectory = Trajectory(PdbFile(path_to_trajectory_dir + "/box.pdb").frames()[0])
+    trajectory.extend(AmberNetCDF(path_to_trajectory_dir + "/GB1_F30C_MTSL_10_frames.nc"))
+    rotation_matrices = extract_rotation_matrices(trajectory=trajectory)
+    vector_turn_0 = np.array([[1, 1, 1]])
+    vector_turn_9 = np.array([1.03029724, 0.97984542, 0.98913627])
+
+    np.testing.assert_allclose(vector_turn_0, vector_turn_0.dot(rotation_matrices[0]))
+    np.testing.assert_allclose(vector_turn_9, vector_turn_0.dot(rotation_matrices[9]))
