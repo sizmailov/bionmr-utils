@@ -77,7 +77,7 @@ def extract_mass_center(trajectory: Union[Trajectory, Trajectory.Slice],
         if atoms is None:
             atoms = frame.atoms.filter(atom_selector)
 
-        current_cm = atoms.mean(weighted=True)
+        current_cm = atoms.mean(weighted=True).values
         time.append(frame.index * time_per_file)
         mass_centers.append(current_cm)
 
