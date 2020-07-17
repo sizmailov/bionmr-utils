@@ -67,8 +67,8 @@ def get_NH_selection(frame: Frame) -> Tuple[AtomSelection, AtomSelection]:
     :param frame: Frame
     :return: tuple of all backbone atom pairs of given frame.
     """
-    atom_pairs_selection = (frame.atoms.filter((aName == "N") & (rId > 1)),
-                            frame.atoms.filter((aName == "H") & (rId > 1))
+    atom_pairs_selection = (frame.atoms.filter((rName != "PRO") & (aName == "N") & (rId > 1)),
+                            frame.atoms.filter((rName != "PRO") & (aName == "H") & (rId > 1))
                             )
 
     return atom_pairs_selection

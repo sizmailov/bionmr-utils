@@ -46,7 +46,7 @@ def test_get_methyl_selection():
     assert СН3_pairs_selection[1].size == 33
 
 
-def test():
+def test_UnpairedElectronSelection():
     path = "tests_dataset/amber/GB1_F30C_MTSL/box.pdb"
     nitrogen = np.array([-7.476, 2.988, 1.402])
     oxygen = np.array([-8.401, 3.498, 0.733])
@@ -75,3 +75,18 @@ def test_get_mtsl_selection():
 
     assert mtsl_pairs_selection[0].size == 1
     assert mtsl_pairs_selection[1].size == 55
+
+
+def test_proline_get_NH_selection():
+
+    path = "tests_dataset/gromacs/xtc/1am7_protein.pdb"
+
+    frame = PdbFile(path).frames()[0]
+    N_selections, H_selections = get_NH_selection(frame)
+
+    assert N_selections.size == H_selections.size
+
+
+
+
+
