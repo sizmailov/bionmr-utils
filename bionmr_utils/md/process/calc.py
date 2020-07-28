@@ -16,10 +16,8 @@ def calc_autocorr(vectors: Dict[Tuple[int, str], np.ndarray],
     :limit: length of auto-correlation function
     :return dict of (rid, aname): auto-correlation
     """
-    autocorr = {(rid, aname): calc_autocorr_func(vector, limit)
-                for (rid, aname), vector in vectors.items()
-                }
-    return autocorr
+    return {(rid, aname): calc_autocorr_func(vector, limit)
+            for (rid, aname), vector in vectors.items()}
 
 
 def calc_inertia_tensor_vectors_autocorr(rotation_matrices: np.array,
