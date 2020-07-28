@@ -1,4 +1,4 @@
-from pyxmolpp2 import AtomSelection, Frame, rId, aId, aName, rName
+from pyxmolpp2 import AtomSelection, Frame, rId, aName, rName
 from typing import Tuple
 
 
@@ -18,20 +18,17 @@ def get_methyl_selection(frame: Frame) -> Tuple[AtomSelection, AtomSelection]:
                 ('ILE', 'CG2'): ['CG2', 'HG21'],
                 ('MET', 'CE1'): ['CE1', 'HE1']}
 
-    C_ids = []
-    H_ids = []
+    C_atoms = []
+    H_atoms = []
 
     for r in frame.residues:
         for atom in r.atoms:
             if (r.name, atom.name) in CH3_dict.keys():
-                C_ids.append(r[CH3_dict[(r.name, atom.name)][0]].id)
-                H_ids.append(r[CH3_dict[(r.name, atom.name)][1]].id)
+                c_name, h_name = CH3_dict[r.name, atom.name]
+                C_atoms.append(r[c_name])
+                H_atoms.append(r[h_name])
 
-    C_atoms = frame.atoms.filter(aId.is_in(set(C_ids)))
-    H_atoms = frame.atoms.filter(aId.is_in(set(H_ids)))
-    atom_pairs_selection = (C_atoms, H_atoms)
-
-    return atom_pairs_selection
+    return AtomSelection(C_atoms), AtomSelection(H_atoms)
 
 
 class UnpairedElectronSelection:
@@ -67,11 +64,8 @@ def get_NH_selection(frame: Frame) -> Tuple[AtomSelection, AtomSelection]:
     :param frame: Frame
     :return: tuple of all backbone atom pairs of given frame.
     """
-    atom_pairs_selection = (frame.atoms.filter((rName != "PRO") & (aName == "N") & (rId > 1)),
-                            frame.atoms.filter((rName != "PRO") & (aName == "H") & (rId > 1))
-                            )
-
-    return atom_pairs_selection
+    return (frame.atoms.filter((rName != "PRO") & (aName == "N") & (rId > 1)),
+            frame.atoms.filter((rName != "PRO") & (aName == "H") & (rId > 1)))
 
 
 def get_mtsl_selection(frame: Frame,
