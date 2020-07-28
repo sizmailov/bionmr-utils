@@ -85,8 +85,3 @@ def test_proline_get_NH_selection():
     N_selections, H_selections = get_NH_selection(frame)
 
     assert N_selections.size == H_selections.size
-
-
-
-
-
