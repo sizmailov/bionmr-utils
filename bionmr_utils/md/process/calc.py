@@ -5,7 +5,7 @@ from tqdm import tqdm
 
 
 def calc_autocorr(vectors: Dict[Tuple[int, str], np.ndarray],
-                  calc_autocorr_func: Callable[[np.ndarray], List[float]] = calc_autocorr_order_2,
+                  calc_autocorr_func: Callable[[np.ndarray, int], List[float]] = calc_autocorr_order_2,
                   limit=-1
                   ) -> Dict[Tuple[str, str], List[float]]:
     """

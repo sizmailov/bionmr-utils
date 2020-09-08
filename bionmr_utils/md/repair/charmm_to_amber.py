@@ -1,5 +1,5 @@
 import bionmr_utils.data
-from bionmr_utils.md import (Frame, AtomName, ResidueName)
+from bionmr_utils.md import (Frame)
 
 
 def rename_inplace_charmm_to_amber(frame: Frame):
@@ -14,12 +14,12 @@ def rename_inplace_charmm_to_amber(frame: Frame):
     def to_atom_name(s):
         assert len(s) <= 4
         assert s.encode('ascii')
-        return AtomName(s)
+        return s
 
     def to_residue_name(s):
         assert len(s) <= 4
         assert s.encode('ascii')
-        return ResidueName(s)
+        return s
 
     anames = pd.concat([
         pd.read_csv(resource_stream(bionmr_utils.data.__name__, "rename_tables/anames_%s.csv" % (suffix)))
@@ -66,25 +66,25 @@ def rename_inplace_charmm_to_amber(frame: Frame):
         return charmm_rName
 
     # rename atoms in termini residues
-    for chain in frame.asChains:
-        residues = chain.asResidues
+    for chain in frame.molecules:
+        residues = chain.residues
         for residue_index in [0, -1]:
-            for atom in residues[residue_index].asAtoms:
-                termini_key = (residue_index, rname_charmm_to_amber(atom.rName, residue_index), atom.aName)
+            for atom in residues[residue_index].atoms:
+                termini_key = (residue_index, rname_charmm_to_amber(atom.residue.name, residue_index), atom.name)
                 if termini_key in rename_termini_aname_map:
-                    print("%s -> %s" % (atom.name.str, rename_termini_aname_map[termini_key].str))
+                    print("%s -> %s" % (atom.name, rename_termini_aname_map[termini_key].str))
                     atom.name = rename_termini_aname_map[termini_key]
 
     # rename atoms in all residues
-    for atom in frame.asAtoms:
-        key = (rname_charmm_to_amber(atom.rName, residue_index=1), atom.aName)
+    for atom in frame.atoms:
+        key = (rname_charmm_to_amber(atom.residue.name, residue_index=1), atom.name)
         if key in rename_aname_map:
             atom.name = rename_aname_map[key]
 
     # rename intermediate residues
-    for residue in frame.asResidues[1:-1]:
+    for residue in frame.residues[1:-1]:
         residue.name = rname_charmm_to_amber(residue.name, 1)
 
     # rename termini residues
-    for residue, residue_index in zip(frame.asResidues[:1] + frame.asResidues[-1:], [0, -1]):  # type: ignore
+    for residue, residue_index in zip(frame.residues[:1] + frame.residues[-1:], [0, -1]):  # type: ignore
         residue.name = rname_charmm_to_amber(residue.name, residue_index)
