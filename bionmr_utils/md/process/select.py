@@ -1,13 +1,12 @@
-import pyxmolpp2
-from bionmr_utils.md import Frame, Atom, AtomName, rName
-from typing import List, Tuple
+from pyxmolpp2 import AtomSelection, Frame, rId, aName, rName
+from typing import Tuple
 
 
-def get_methyl_vectors(frame: Frame) -> List[Tuple[Atom, Atom]]:
+def get_methyl_selection(frame: Frame) -> Tuple[AtomSelection, AtomSelection]:
     """
 
     :param frame: Frame
-    :return: list of all methyl C-H atom pairs of given frame.
+    :return: tuple of all methyl C-H atom pairs of given frame.
     """
     CH3_dict = {('ALA', 'CB'): ['CB', 'HB1'],
                 ('VAL', 'CG1'): ['CG1', 'HG11'],
@@ -19,67 +18,68 @@ def get_methyl_vectors(frame: Frame) -> List[Tuple[Atom, Atom]]:
                 ('ILE', 'CG2'): ['CG2', 'HG21'],
                 ('MET', 'CE1'): ['CE1', 'HE1']}
 
-    atom_pairs = []
+    C_atoms = []
+    H_atoms = []
 
-    for r in frame.asResidues:
-        for atom in r.asAtoms:
-            if (r.name.str, atom.name.str) in CH3_dict.keys():
-                C = r[AtomName(CH3_dict[(r.name.str, atom.name.str)][0])]
-                H = r[AtomName(CH3_dict[(r.name.str, atom.name.str)][1])]
-                atom_pairs.append((C, H))
+    for r in frame.residues:
+        for atom in r.atoms:
+            if (r.name, atom.name) in CH3_dict.keys():
+                c_name, h_name = CH3_dict[r.name, atom.name]
+                C_atoms.append(r[c_name])
+                H_atoms.append(r[h_name])
 
-    return atom_pairs
+    return AtomSelection(C_atoms), AtomSelection(H_atoms)
 
 
-def get_NH_vectors(frame: Frame) -> List[Tuple[Atom, Atom]]:
+class UnpairedElectronSelection:
+    def __init__(self, nitrogen_selection, oxygen_selection):
+        self.nitrogen_selection = nitrogen_selection
+        self.oxygen_selection = oxygen_selection
+
+    class ElectronCoords:
+        def __init__(self, nitrogen_coords, oxygen_coords):
+            self.nitrogen_coords = nitrogen_coords
+            self.oxygen_coords = oxygen_coords
+
+        @property
+        def values(self):
+            return (self.nitrogen_coords.values + self.oxygen_coords.values) / 2
+
+    @property
+    def coords(self):
+        return self.ElectronCoords(self.nitrogen_selection.coords, self.oxygen_selection.coords)
+
+    @property
+    def size(self):
+        return self.nitrogen_selection.size
+
+    @property
+    def index(self):
+        return self.nitrogen_selection.index
+
+
+def get_NH_selection(frame: Frame) -> Tuple[AtomSelection, AtomSelection]:
     """
 
     :param frame: Frame
-    :return: list of all backbone atom pairs of given frame.
+    :return: tuple of all backbone atom pairs of given frame.
     """
-    atom_pairs = []
-
-    for r in frame.asResidues:
-        try:
-            atom_pairs.append((r[AtomName("N")], r[AtomName("H")]))
-        except pyxmolpp2.polymer.OutOfRangeResidue:
-            pass
-
-    return atom_pairs
+    return (frame.atoms.filter((rName != "PRO") & (aName == "N") & (rId > 1)),
+            frame.atoms.filter((rName != "PRO") & (aName == "H") & (rId > 1)))
 
 
-class UnpairedElectron:
-    def __init__(self, nitrogen, oxygen):
-        self.nitrogen = nitrogen
-        self.oxygen = oxygen
-
-    @property
-    def rId(self):
-        return self.nitrogen.rId
-
-    @property
-    def aName(self):
-        return AtomName("e")
-
-    @property
-    def r(self):
-        return (self.nitrogen.r + self.oxygen.r) / 2
-
-
-def get_mtsl_vectors(frame: Frame) -> List[Tuple[Atom, UnpairedElectron]]:
+def get_mtsl_selection(frame: Frame,
+                       label_name="CML",
+                       ):
     """
 
     :param frame: Frame
-    :return: list of all backbone atom pairs of given frame.
+    :return: tuple of all backbone atom pairs of given frame.
     """
-    r = frame.asResidues.filter(rName == "CML")[0]
-    electron = UnpairedElectron(r[AtomName("N1")], r[AtomName("O1")])
-    atom_pairs = []
+    label_atoms = frame.atoms.filter(rName == label_name)
+    electron = UnpairedElectronSelection(label_atoms.filter(aName == "N1"), label_atoms.filter(aName == "O1"))
+    assert electron.size == 1
 
-    for r in frame.asResidues:
-        try:
-            atom_pairs.append((r[AtomName("H")], electron))
-        except pyxmolpp2.polymer.OutOfRangeResidue:
-            pass
+    atom_pairs_selection = (electron, frame.atoms.filter(aName == "H"))
 
-    return atom_pairs
+    return atom_pairs_selection

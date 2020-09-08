@@ -1,24 +1,50 @@
 import numpy as np
 from typing import Tuple, Dict, List, Callable
-from pyxmolpp2.geometry import calc_autocorr_order_2, VectorXYZ
-from pyxmolpp2.polymer import ResidueId, ResidueName
+from pyxmolpp2 import calc_autocorr_order_2
+from tqdm import tqdm
 
 
-def calc_autocorr(vectors: Dict[Tuple[ResidueId, ResidueName], VectorXYZ],
-                  calc_autocorr_func: Callable[[VectorXYZ], List[float]] = calc_autocorr_order_2,
-                  ) -> Dict[Tuple[ResidueId, ResidueName], List[float]]:
+def calc_autocorr(vectors: Dict[Tuple[int, str], np.ndarray],
+                  calc_autocorr_func: Callable[[np.ndarray], List[float]] = calc_autocorr_order_2,
+                  limit=-1
+                  ) -> Dict[Tuple[str, str], List[float]]:
     """
     Get auto-correlation from trajectory
 
     :param vectors: dict of (rid, aname): VectorXYZ
     :calc_autocorr_func: function calculates auto-correlation
+    :limit: length of auto-correlation function
     :return dict of (rid, aname): auto-correlation
     """
-    autocorr = {(rid, aname): calc_autocorr_func(vector)
-                for (rid, aname), vector in vectors.items()
-                }
+    return {(rid, aname): calc_autocorr_func(vector, limit)
+            for (rid, aname), vector in vectors.items()}
 
-    return autocorr
+
+def calc_inertia_tensor_vectors_autocorr(rotation_matrices: np.array,
+                                         rotation_axes: np.array,
+                                         rotation_axes_weights: np.array,
+                                         limit: int = -1,
+                                         ) -> np.array:
+    """
+    Get auto-correlation for inertia vectors
+
+    :rotation matrices: rotation matrices as numpy array of shape (N, 3, 3), where N is length of trajectory
+    :rotation_axes: (x, y, z) coordinates of axes as numpy array of shape (N, 3), where N is number of axes
+                    corresponding to the directions in space along which rotation is considered
+    :rotation_axes_weights: significance of the rotation axes as numpy array of shape (N, 1)
+    :limit: length of auto-correlation function
+    :return: auto-correlation function
+    """
+
+    number_of_vectors = rotation_matrices.shape[0]
+    sum_acorr = np.zeros(number_of_vectors)
+
+    for r, w in tqdm(zip(rotation_axes, rotation_axes_weights), desc="calc autocorr"):
+        vectors = rotation_matrices.dot(r)
+        autocorr = np.array(calc_autocorr_order_2(vectors, limit=limit))
+        sum_acorr += autocorr * w
+
+    return np.array(sum_acorr / 4 / np.pi)
 
 
 def calc_mean_square_displacement(time: np.array,
