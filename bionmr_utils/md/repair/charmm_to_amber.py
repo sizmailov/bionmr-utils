@@ -72,7 +72,7 @@ def rename_inplace_charmm_to_amber(frame: Frame):
             for atom in residues[residue_index].atoms:
                 termini_key = (residue_index, rname_charmm_to_amber(atom.residue.name, residue_index), atom.name)
                 if termini_key in rename_termini_aname_map:
-                    print("%s -> %s" % (atom.name, rename_termini_aname_map[termini_key].str))
+                    print("%s -> %s" % (atom.name, rename_termini_aname_map[termini_key]))
                     atom.name = rename_termini_aname_map[termini_key]
 
     # rename atoms in all residues
@@ -86,5 +86,5 @@ def rename_inplace_charmm_to_amber(frame: Frame):
         residue.name = rname_charmm_to_amber(residue.name, 1)
 
     # rename termini residues
-    for residue, residue_index in zip(frame.residues[:1] + frame.residues[-1:], [0, -1]):  # type: ignore
+    for residue, residue_index in zip(frame.residues[:1] | frame.residues[-1:], [0, -1]):  # type: ignore
         residue.name = rname_charmm_to_amber(residue.name, residue_index)
